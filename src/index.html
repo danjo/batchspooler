@@ -1,0 +1,41 @@
+<link href="_ext/css/tabulator.min.css" rel="stylesheet">
+<script type="text/javascript" src="_ext/js/tabulator.min.js"></script>
+
+<script>var exports = {};</script>
+<script type="text/javascript" src="controller.js"></script>
+<link href="main.css" rel="stylesheet">
+
+<div class="col">
+    <div id="table"></div>
+</div>
+<div class="col">
+    <button type="button" onclick="bstart();">start</button>
+    <button type="button" onclick="bstop();">stop</button>
+    <button type="button" onclick="bexport();">export</button>
+    <button type="button" onclick="bimport();">import</button>
+    step:<input id="step" readonly value="-"></input>
+</div>
+
+<footer>
+    <div class="col">
+        <textarea id="log"></textarea><br>
+    </div>
+</footer>
+
+<script>
+    let ctr = require("./controller.js");
+    let c = ctr.Controller.init();
+
+    function bstart() { c.buttonStart(); };
+    function bstop() { c.buttonStop(); };
+    function bexport() { c.buttonExport(); };
+    function bimport() { c.buttonImport(); };
+
+    let dulation = c.getDulation();
+    function spool() {
+        c.spool();
+        setTimeout(spool, dulation);
+    }
+    spool();
+
+</script>

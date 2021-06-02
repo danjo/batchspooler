@@ -1,0 +1,5 @@
+/dist
+/node_modules
+/out
+/src/_ext
+/batchspooler.zip

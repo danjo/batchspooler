@@ -1,0 +1,28 @@
+# todo
+- validate
+- default config
+
+# jobs
+- exec
+  - exec
+    - wait
+    - nowait
+    - start(win)
+    - ps1(win)
+- other
+  - echo
+- notification
+  - color
+  - sound
+  - toast(win)
+- timer
+  - sleep
+    - for
+    - until
+- parallel
+  - open
+  - join
+- contidion
+  - ec
+- loop-like
+  - copy
