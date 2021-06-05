@@ -1,6 +1,5 @@
 import { EmptyJob } from "./batchjob"
 import { BatchEntry, EStat } from "./batchentry"
-import { Controller } from "./controller";
 
 export interface TableConf {
     dulationMilSec: number,
@@ -31,11 +30,9 @@ export class BatchTable {
     }
 
     getEntry(id: number): BatchEntry {
-        for (let i = 0; i < this.entries.length; i++) {
-            let e = this.entries[i];
-            // console.log("" + id + "," + e.id);
-            if (id == e.id) {
-                return e;
+        for(let entry of this.entries){
+            if (id === entry.id) {
+                return entry;
             }
         }
 
@@ -89,7 +86,7 @@ export class BatchTable {
         let eGroups: { [key: string]: BatchEntry[] } = {};
         for (let entry of this.entries) {
             let group = entry.group;
-            if (this.openedGroups.indexOf(group) == -1) {
+            if (this.openedGroups.indexOf(group) === -1) {
                 continue;
             }
 

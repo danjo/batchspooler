@@ -39,6 +39,7 @@ export class Controller {
             throw new Error("init(): margv=" + margv);
         }
     }
+
     static load(path: string): Controller {
         let c = new Controller(path);
         Controller.lastObj = c;
@@ -140,6 +141,7 @@ export class Controller {
 
         // html
         this.count += 1;
+        (document.getElementById("group") as HTMLInputElement).value = String(this.batchtable.openedGroups);
         (document.getElementById("step") as HTMLInputElement).value = String(this.count);
     }
 

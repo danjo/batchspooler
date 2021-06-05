@@ -1,15 +1,15 @@
 import * as fs from "fs"
 import * as js_yaml from "js-yaml"
 import { BatchTable, TableConf } from "./batchtable"
-import { BatchJob, BatchJobClasses } from "./batchjob"
+import { BatchJobClasses } from "./batchjob"
 import { BatchEntry } from "./batchentry"
 
 interface YConf {
     dulationMilSec: number,
     workingDir: string
-    width: number
-    height: number,
-    devtool: boolean,
+    width?: number
+    height?: number,
+    devtool?: boolean,
     loglevel: string
 };
 type YJobInfo = [string, string, string];
@@ -23,9 +23,9 @@ export class BatchFactory {
     static defaultConf: YConf = {
         dulationMilSec: 1000,
         workingDir: ".",
-        width: 1100,
-        height: 600,
-        devtool: true,
+        // width: 1100,
+        // height: 600,
+        // devtool: true,
         loglevel: "DEBUG"
     };
     static defaultJobInfo: YJobInfo[] = [
@@ -35,10 +35,10 @@ export class BatchFactory {
     static buildYaml(path: string): BatchTable {
         let ydoc: YDoc;
         if (path == null) {
-            ydoc = { conf: {}, jobs: [] } as YDoc;
+            ydoc = { conf: this.defaultConf, jobs: this.defaultJobInfo } as YDoc;
         } else {
             let ystr = fs.readFileSync(path, "utf8");
-            // todo: treat yamlexception
+            // ToDo: treat yamlexception
             ydoc = js_yaml.load(ystr) as YDoc;
         }
         let yconf: YConf = { ...this.defaultConf, ...ydoc.conf };

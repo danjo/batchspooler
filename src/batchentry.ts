@@ -1,4 +1,4 @@
-import { BatchJob, JobStat, BatchJobClasses } from "./batchjob"
+import { BatchJob, BatchJobClasses } from "./batchjob"
 
 export enum EStat {
     entry = "",
@@ -7,11 +7,11 @@ export enum EStat {
 }
 
 export interface TabulatorData {
-    id: string // number
-    status: string //Stat
+    id: string
+    status: string
     group: string
-    exitCode: string //number
-    job: string //JobEntry
+    exitCode: string
+    job: string
     parameter: string
     add: string
     del: string
@@ -84,8 +84,6 @@ export class BatchEntry {
     }
 
     updateJob(presentName: string) {
-        // { status: "*", group: "a", exitCode: "", job: "exec", parameter: "C:\\Windows\\notepad.exe", add: "+", del: "-" },
-
         let param = this.job.parameter;
         let jobClass = BatchJobClasses[presentName];
         if (jobClass == null) {
@@ -107,7 +105,6 @@ export class BatchEntry {
             del: "-",
         };
 
-        // console.log("ID:"+ id);
         return data;
     }
 }

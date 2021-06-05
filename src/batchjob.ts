@@ -1,5 +1,4 @@
-import { exec, execSync } from "child_process";
-import { exitCode } from "process";
+import { exec } from "child_process";
 import { Controller } from "./controller";
 
 export interface JobStat {
@@ -103,7 +102,7 @@ let classes: { [key: string]: typeof BatchJob } = {
 
 let keys = Object.keys(classes)
 for (let key of keys) {
-    let pn = (new classes[key](null)).presentName
-    BatchJobClasses[pn] = classes[key]
-    // console.log("pn:" + pn)
+    let pname = (new classes[key](null)).presentName
+    BatchJobClasses[pname] = classes[key]
+    // console.log("pname:" + pname)
 }
