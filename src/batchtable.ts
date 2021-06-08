@@ -9,8 +9,8 @@ export interface TableConf {
 export class BatchTable {
     readonly dulationMilSec: number;
     readonly workingDir: string;
-    readonly entries: BatchEntry[] = [];
-    readonly openedGroups: string[] = [""];
+    private entries: BatchEntry[] = [];
+    private openedGroups: string[] = [""];
 
     constructor(conf: TableConf, entries: BatchEntry[]) {
         this.dulationMilSec = conf.dulationMilSec;
@@ -19,6 +19,11 @@ export class BatchTable {
         for (let entry of entries) {
             this.entries.push(entry);
         }
+    }
+
+    getEntries(): readonly BatchEntry[] {
+        let array: readonly BatchEntry[] = this.entries;
+        return array;
     }
 
     newEntry(): BatchEntry {
@@ -42,7 +47,7 @@ export class BatchTable {
     addEntry(prevId: number, entry: BatchEntry) {
         for (let i = 0; i < this.entries.length; i++) {
             let prevEntry = this.entries[i];
-            if (prevId == prevEntry.id) {
+            if (prevId === prevEntry.id) {
                 this.entries.splice(i, 0, entry);
                 return;
             }
@@ -52,15 +57,22 @@ export class BatchTable {
     }
 
     deleteEntry(id: number): void {
+        console.log(id);
         for (let i = 0; i < this.entries.length; i++) {
             let e = this.entries[i];
             if (id === e.id) {
+                console.log(id);
                 this.entries.splice(i, 1);
                 return;
             }
         }
 
         throw new Error("deleteEntry(): id=" + id);
+    }
+
+    getOpenedGroups(): readonly string[] {
+        let array: readonly string[] = this.openedGroups;
+        return array;
     }
 
     addOpenedGroup(group: string): void {

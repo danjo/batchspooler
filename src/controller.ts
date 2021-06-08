@@ -12,6 +12,12 @@ export enum CStat {
     Start = "*",
 }
 
+interface RowInfo {
+    row: Tabulator.RowComponent,
+    pos: number,
+    id: number
+}
+
 export class Controller {
     // static vLen = 1;
     static lastObj: Controller;
@@ -22,9 +28,9 @@ export class Controller {
         console.log(margv);
 
         let hlen: number;
-        if(margv[0].indexOf("electron.exe") !== -1){
+        if (margv[0].indexOf("electron.exe") !== -1) {
             hlen = 4;
-        }else if(margv[0].indexOf("batchspooler.exe") !== -1){
+        } else if (margv[0].indexOf("batchspooler.exe") !== -1) {
             hlen = 1;
         }
 
@@ -70,8 +76,8 @@ export class Controller {
             headerSort: false,
             cellHozAlign: "center",
             columns: [
-                { title: "id", field: "id", headerHozAlign: "center", formatter: "rownum" },
-                // { title: "id", field: "id", headerHozAlign: "center" },
+                // { title: "id", field: "id", headerHozAlign: "center", formatter: "rownum" },
+                { title: "id", field: "id", headerHozAlign: "center" },
                 { title: "stat", field: "status", headerHozAlign: "center", editor: "select", editorParams: statusParams, cellEdited: (cell) => { this.updateStat(cell) } },
                 { title: "grp", field: "group", headerHozAlign: "center", editor: "input", cellEdited: (cell) => { this.updateGroup(cell) } },
                 { title: "job", field: "job", headerHozAlign: "center", width: 60, editor: "select", editorParams: jobParams, cellEdited: (cell) => { this.updateJob(cell) } },
@@ -92,7 +98,7 @@ export class Controller {
     }
 
     async doAsyncProcs() {
-        for (let entry of this.batchtable.entries) {
+        for (let entry of this.batchtable.getEntries()) {
             let id = entry.id;
             console.log(id);
             let data = entry.getTabulatorData();
@@ -141,7 +147,7 @@ export class Controller {
 
         // html
         this.count += 1;
-        (document.getElementById("group") as HTMLInputElement).value = String(this.batchtable.openedGroups);
+        (document.getElementById("group") as HTMLInputElement).value = String(this.batchtable.getOpenedGroups());
         (document.getElementById("step") as HTMLInputElement).value = String(this.count);
     }
 
@@ -149,67 +155,68 @@ export class Controller {
         this.batchtable.addOpenedGroup(group);
     }
 
+    private getRowInfo(cell: Tabulator.CellComponent): RowInfo {
+        let row = cell.getRow();
+        let pos = row.getPosition();
+        let id: number = Number(row.getIndex());
+        if (isNaN(id)) {
+            throw new Error("getPosId(): id=" + id);
+        }
+
+        return { row, pos, id };
+    }
+
     // trriger from tabulator
     async addEntry(e: UIEvent, cell: Tabulator.CellComponent) {
-        let row = cell.getRow();
-        let prevId = row.getIndex();
-        // let pos = row.getPosition(true);
-        // this.log("addEntry:" + pos);
+        let ri = this.getRowInfo(cell);
+        this.appLog("addEntry:" + ri.pos);
 
-        // console.log("pos:" +pos);
         let newId = BatchEntry.createId(0);
         let entry = this.batchtable.newEntry();
         let data = entry.getTabulatorData();
-        this.batchtable.addEntry(prevId, entry);
-        let newRow = await this.tabulator.addRow(data, true, row);
+        this.batchtable.addEntry(ri.id, entry);
+        let newRow = await this.tabulator.addRow(data, true, ri.row);
         this.idBag[newId] = newRow;
     }
 
     deleteEntry(e: UIEvent, cell: Tabulator.CellComponent) {
-        let row = cell.getRow();
-        let id = row.getIndex();
+        let ri = this.getRowInfo(cell);
+        this.appLog("deleteEntry:" + ri.pos);
 
-        this.tabulator.deleteRow(row);
-        delete this.idBag[id];
+        this.batchtable.deleteEntry(ri.id);
+        this.tabulator.deleteRow(ri.row);
+        delete this.idBag[ri.id];
     }
 
     updateStat(cell: Tabulator.CellComponent) {
-        let row = cell.getRow();
-        let pos = row.getPosition(true);
-        let id = row.getIndex();
-        let entry = this.batchtable.getEntry(id);
+        let ri = this.getRowInfo(cell);
+        let entry = this.batchtable.getEntry(ri.id);
+        this.appLog("updateStat:" + ri.pos);
 
-        this.appLog("updateStat:" + pos);
         let stat = cell.getValue();
         entry.status = stat;
     }
     updateGroup(cell: Tabulator.CellComponent) {
-        let row = cell.getRow();
-        let pos = row.getPosition(true);
-        let id = row.getIndex();
-        let entry = this.batchtable.getEntry(id);
+        let ri = this.getRowInfo(cell);
+        let entry = this.batchtable.getEntry(ri.id);
+        this.appLog("updateGroup:" + ri.pos);
 
-        this.appLog("updateGroup:" + pos);
         let grp = cell.getValue();
         entry.group = grp;
     }
     updateJob(cell: Tabulator.CellComponent) {
-        let row = cell.getRow();
-        let pos = row.getPosition(true);
-        let id = row.getIndex();
-        this.appLog("updateJob: id=" + id + ", pos=" + pos);
+        let ri = this.getRowInfo(cell);
+        let entry = this.batchtable.getEntry(ri.id);
+        this.appLog("updateJob: pos=" + ri.pos);
 
-        let entry = this.batchtable.getEntry(id);
         let job = cell.getValue();
         entry.updateJob(job);
     }
     updateParam(cell: Tabulator.CellComponent) {
-        let row = cell.getRow();
-        let pos = row.getPosition(true);
-        let id = row.getIndex();
-        let entry = this.batchtable.getEntry(id);
+        let ri = this.getRowInfo(cell);
+        let entry = this.batchtable.getEntry(ri.id);
+        this.appLog("updateParam: pos=" + ri.pos);
 
-        this.appLog("updateParam:" + pos);
         let param = cell.getValue();
         entry.job.parameter = param;
     }
