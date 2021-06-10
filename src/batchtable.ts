@@ -57,11 +57,10 @@ export class BatchTable {
     }
 
     deleteEntry(id: number): void {
-        console.log(id);
+        // console.log(id);
         for (let i = 0; i < this.entries.length; i++) {
             let e = this.entries[i];
             if (id === e.id) {
-                console.log(id);
                 this.entries.splice(i, 1);
                 return;
             }

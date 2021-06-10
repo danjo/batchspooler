@@ -1,0 +1,11 @@
+{
+    "conf":
+        {
+            "workingDir": ".",
+        },
+    "jobs":
+        [
+            ["", "sleep", "until 2100"],
+            ["", "exec", "notepad moo.txt"],
+        ],
+}
