@@ -70,7 +70,32 @@ export class SleepJob extends BatchJob {
     presentName = "sleep";
 
     async run(prevEc: number): Promise<JobStat> {
-        let count = Number(this.parameter)
+        let m1 = this.parameter.match("until.(\\d\\d)(\\d\\d)");
+        let m2 = this.parameter.match("for.(\\d+)");
+
+        if (m1 != null) {
+            let hour = Number(m1[1]);
+            let min = Number(m1[2]);
+            let unt = new Date();
+            unt.setHours(hour, min, 0, 0);
+
+            while (true) {
+                let now = new Date();
+                if (now >= unt) {
+                    return null;
+                }
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+        } else if (m2 != null) {
+            let count = Number(m2[1]);
+            await new Promise(resolve => setTimeout(resolve, count * 1000));
+            return null;
+        }
+
+        let count = Number(this.parameter);
+        if (isNaN(count) === true) {
+            throw new Error("run() parameter=" + this.parameter);
+        }
         await new Promise(resolve => setTimeout(resolve, count * 1000));
         return null;
     }
