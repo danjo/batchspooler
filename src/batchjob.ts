@@ -65,6 +65,19 @@ export class EchoJob extends BatchJob {
     }
 }
 
+export class SoundJob extends BatchJob {
+    presentName = "sound";
+
+    async run(prevEc: number): Promise<JobStat> {
+        Controller.lastObj.appLog(this.parameter);
+
+        let au = new Audio();
+        au.src = process.cwd() + "/" + this.parameter;
+        await au.play();
+        return null;
+    }
+}
+
 // sleep
 export class SleepJob extends BatchJob {
     presentName = "sleep";
@@ -120,6 +133,7 @@ export let BatchJobClasses: { [key: string]: typeof BatchJob } = {}
 let classes: { [key: string]: typeof BatchJob } = {
     EmptyJob,
     EchoJob,
+    SoundJob,
     ExecJob,
     OpenGroup,
     SleepJob,

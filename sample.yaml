@@ -1,0 +1,20 @@
+{
+    "conf":
+        {
+           # "dulationMilSec": 1000,
+           # "workingDir": ".",
+           # "width" : 1100,
+           # "height": 500,
+           # "devtool" : true,
+           # "loglevel" : "DEBUG"
+        },
+    "jobs":
+        [
+            ["", "exec", "notepad assets/moo.txt"],
+            ["", "sleep", "2"],
+            ["", "open", "a"],
+            ["a",  "sound", "assets/8007__cfork__cf-fx-flopp-04-bass.mp3"],
+            ["a", "echo", "finished!"],
+            ["b", "echo", "not finished!"],
+        ],
+}

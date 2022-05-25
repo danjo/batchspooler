@@ -7,8 +7,10 @@ function createWindow() {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false
-        }
+        },
     })
+
+    console.log(elec.app.getAppPath());
 
     elec.ipcMain.on('mainArgv', (event, arg) => {
         // console.log("mainArgv");
@@ -19,7 +21,10 @@ function createWindow() {
     win.setMenu(null);
     win.loadURL("file://" + __dirname + "/index.html");
 
-    win.webContents.openDevTools();
+    let devtool = true;
+    if (devtool) {
+        win.webContents.openDevTools();
+    }
 
     win.on("closed", () => {
         // win = null

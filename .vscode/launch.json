@@ -15,7 +15,7 @@
                 "--enable-logging" , "out/app.js"
             ],
             "args": [
-                ".", "moo.yaml"
+                ".", "sample.yaml"
             ],
             "console":"integratedTerminal",
             "timeout": 20000

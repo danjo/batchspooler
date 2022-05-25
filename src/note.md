@@ -1,6 +1,7 @@
 # todo
-- validate
 - default config
+- import/export
+- validate
 
 # jobs
 - exec
