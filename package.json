@@ -17,7 +17,6 @@
     "typescript": "^5.2.2"
   },
   "devDependencies": {
-    "@types/electron": "^1.6.10",
     "@types/js-yaml": "^4.0.5",
     "@types/node": "^20.8.9",
     "@types/tabulator-tables": "^4.9.4",
