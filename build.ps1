@@ -2,9 +2,10 @@
 ./clean.ps1
 
 # build
-Expand-Archive -Force -Path assets/tabulator-master.zip -DestinationPath .
-cp -Recurse ./tabulator-master/dist/css src/_ext/css
-cp -Recurse ./tabulator-master/dist/js src/_ext/js
+$ver = "4.9.3"
+Expand-Archive -Force -Path assets/tabulator-${ver}.zip -DestinationPath .
+cp -Recurse ./tabulator-${ver}/dist/css src/_ext/css
+cp -Recurse ./tabulator-${ver}/dist/js src/_ext/js
 
 npm run-script build
 if ( $? -eq $false ){
