@@ -240,9 +240,31 @@ export class Controller {
         this.appLog("import");
         // this.appLog("not implemented yet.");
 
-        let filename = electron.ipcRenderer.sendSync('bimport', this.batchtable.workingDir) as string;
-        this.appLog(filename);
+        let path = electron.ipcRenderer.sendSync('bimport', this.batchtable.workingDir) as string;
+        this.appLog(path);
+
+        // before buildYaml()
+        this.doDeleteExists();
+
+        this.batchtable = BatchFactory.buildYaml(path);
+
+        // no await
+        this.doAsyncProcs();
     }
+
+    async doDeleteExists() {
+        // batchtable
+        for (let entry of this.batchtable.getEntries()) {
+            let id = entry.id;
+            delete this.idBag[id];
+        }
+
+        // tabulator
+        for (let row of this.tabulator.getRows()) {
+            await this.tabulator.deleteRow(row);
+        }
+    }
+
 
     buttonExport() {
         this.appLog("export");

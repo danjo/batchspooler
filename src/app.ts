@@ -3,7 +3,7 @@ import * as elec from 'electron';
 
 function createWindow() {
     let win = new elec.BrowserWindow({
-        width: 1250, height: 500,
+        width: 1240, height: 500,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false
