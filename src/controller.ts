@@ -252,7 +252,7 @@ export class Controller {
         this.doAsyncProcs();
     }
 
-    async doDeleteExists() {
+    doDeleteExists() {
         // batchtable
         for (let entry of this.batchtable.getEntries()) {
             let id = entry.id;
@@ -261,7 +261,7 @@ export class Controller {
 
         // tabulator
         for (let row of this.tabulator.getRows()) {
-            await this.tabulator.deleteRow(row);
+            this.tabulator.deleteRow(row);
         }
     }
 
@@ -270,7 +270,15 @@ export class Controller {
         this.appLog("export");
         // this.appLog("not implemented yet.");
 
-        let filename = electron.ipcRenderer.sendSync('bexport', this.batchtable.workingDir) as string;
-        this.appLog(filename);
+        let path = electron.ipcRenderer.sendSync('bexport', this.batchtable.workingDir) as string;
+        this.appLog(path);
+
+        // batchtable
+        for (let entry of this.batchtable.getEntries()) {
+            let str = "" + entry.group + "" + entry.job.presentName + "," + entry.job.parameter;
+            //console.log(str);
+        }
+
+        // tabulator
     }
 }

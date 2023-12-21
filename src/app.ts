@@ -42,12 +42,11 @@ function createWindow() {
     });
 
     elec.ipcMain.on("bexport", (event, arg) => {
-        let filenames = elec.dialog.showSaveDialogSync({
+        let filename = elec.dialog.showSaveDialogSync({
             defaultPath: arg[0],
             properties: ['showOverwriteConfirmation']
         });
 
-        let filename = filenames[0];
         event.returnValue = filename;
     });
 }
