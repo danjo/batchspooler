@@ -273,12 +273,29 @@ export class Controller {
         let path = electron.ipcRenderer.sendSync('bexport', this.batchtable.workingDir) as string;
         this.appLog(path);
 
+        let jobs: string[] = [];
         // batchtable
         for (let entry of this.batchtable.getEntries()) {
-            let str = "" + entry.group + "" + entry.job.presentName + "," + entry.job.parameter;
-            //console.log(str);
+            let job = `["${entry.group}","${entry.job.presentName}","${entry.job.parameter}"]`;
+            console.log(job);
+            jobs.push("            " + job);
         }
 
         // tabulator
+
+
+        //
+
+        let tmpl = `{
+    "conf":
+        {
+        },
+    "jobs":
+        [
+${jobs.join(",\r\n")}
+        ],
+}`;
+
+        console.log(tmpl);
     }
 }
