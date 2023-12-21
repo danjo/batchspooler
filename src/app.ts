@@ -3,7 +3,7 @@ import * as elec from 'electron';
 
 function createWindow() {
     let win = new elec.BrowserWindow({
-        width: 1100, height: 500,
+        width: 1250, height: 500,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false
@@ -29,6 +29,26 @@ function createWindow() {
     win.on("closed", () => {
         // win = null
         elec.app.quit();
+    });
+
+    elec.ipcMain.on("bimport", (event, arg) => {
+        let filenames = elec.dialog.showOpenDialogSync({
+            defaultPath: arg[0],
+            properties: ['openFile']
+        });
+
+        let filename = filenames[0];
+        event.returnValue = filename;
+    });
+
+    elec.ipcMain.on("bexport", (event, arg) => {
+        let filenames = elec.dialog.showSaveDialogSync({
+            defaultPath: arg[0],
+            properties: ['showOverwriteConfirmation']
+        });
+
+        let filename = filenames[0];
+        event.returnValue = filename;
     });
 }
 

@@ -2,7 +2,7 @@
 <script type="text/javascript" src="_ext/js/tabulator.min.js"></script>
 
 <script>var exports = {};</script>
-<script type="text/javascript" src="controller.js"></script>
+<!--script type="text/javascript" src="controller.js"></script>-->
 <link href="main.css" rel="stylesheet">
 
 <div class="col">
@@ -11,8 +11,8 @@
 <div class="col">
     <button type="button" onclick="bstart();">start</button>
     <button type="button" onclick="bstop();">stop</button>
-    <button type="button" onclick="bexport();">export</button>
     <button type="button" onclick="bimport();">import</button>
+    <button type="button" onclick="bexport();">export</button>
 
     group:<input id="group" readonly value="-"></input>
     step:<input id="step" readonly value="-"></input>
@@ -30,8 +30,8 @@
 
     function bstart() { c.buttonStart(); };
     function bstop() { c.buttonStop(); };
-    function bexport() { c.buttonExport(); };
     function bimport() { c.buttonImport(); };
+    function bexport() { c.buttonExport(); };
 
     let dulation = c.getDulation();
     function spool() {

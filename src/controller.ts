@@ -76,8 +76,8 @@ export class Controller {
             headerSort: false,
             cellHozAlign: "center",
             columns: [
-                // { title: "id", field: "id", headerHozAlign: "center", formatter: "rownum" },
-                { title: "id", field: "id", headerHozAlign: "center" },
+                { title: "row", field: "row", headerHozAlign: "center", formatter: "rownum" },
+                { title: "id", field: "id", headerHozAlign: "center", width: 140 },
                 { title: "stat", field: "status", headerHozAlign: "center", editor: "select", editorParams: statusParams, cellEdited: (cell) => { this.updateStat(cell) } },
                 { title: "grp", field: "group", headerHozAlign: "center", editor: "input", cellEdited: (cell) => { this.updateGroup(cell) } },
                 { title: "job", field: "job", headerHozAlign: "center", width: 60, editor: "select", editorParams: jobParams, cellEdited: (cell) => { this.updateJob(cell) } },
@@ -236,32 +236,19 @@ export class Controller {
         this.stat = CStat.Stop;
     }
 
-    async buttonImport() {
+    buttonImport() {
         this.appLog("import");
-        this.appLog("not implemented yet.");
+        // this.appLog("not implemented yet.");
 
-        /*
-        let dialog = electron.remote.dialog;
-
-        let filenames = await dialog.showOpenDialog({
-            defaultPath: this.batchtable.workingDir,
-            properties: ['openFile']
-        });
-
-        let c: Controller;
-
-        let filename = filenames.filePaths[0];
+        let filename = electron.ipcRenderer.sendSync('bimport', this.batchtable.workingDir) as string;
         this.appLog(filename);
-        try {
-            c = Controller.load(filename);
-        } catch (err) {
-            this.appLog(err);
-        }
-        */
     }
 
     buttonExport() {
         this.appLog("export");
-        this.appLog("not implemented yet.");
+        // this.appLog("not implemented yet.");
+
+        let filename = electron.ipcRenderer.sendSync('bexport', this.batchtable.workingDir) as string;
+        this.appLog(filename);
     }
 }
