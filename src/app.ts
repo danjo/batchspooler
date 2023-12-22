@@ -1,5 +1,5 @@
 import * as elec from 'electron';
-
+import * as fs from 'fs';
 
 function createWindow() {
     let win = new elec.BrowserWindow({
@@ -12,7 +12,7 @@ function createWindow() {
 
     console.log(elec.app.getAppPath());
 
-    elec.ipcMain.on('mainArgv', (event, arg) => {
+    elec.ipcMain.on('mainArgv', (event) => {
         // console.log("mainArgv");
         event.returnValue = process.argv;
     });
@@ -48,6 +48,10 @@ function createWindow() {
         });
 
         event.returnValue = filename;
+    });
+    elec.ipcMain.on("bexport_save", (event, path, yaml) => {
+        console.log(path);
+        fs.writeFileSync(path, yaml);
     });
 }
 
