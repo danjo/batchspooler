@@ -1,4 +1,5 @@
 import * as electron from 'electron';
+import * as fs from 'fs';
 import { BatchFactory } from "./batchfactory";
 import { BatchTable } from "./batchtable";
 import { BatchEntry, EStat } from "./batchentry";
@@ -277,16 +278,15 @@ export class Controller {
         // batchtable
         for (let entry of this.batchtable.getEntries()) {
             let job = `["${entry.group}","${entry.job.presentName}","${entry.job.parameter}"]`;
-            console.log(job);
+            this.appLog(job);
             jobs.push("            " + job);
         }
 
         // tabulator
-
+        // do nothing
 
         //
-
-        let tmpl = `{
+        let yaml = `{
     "conf":
         {
         },
@@ -295,7 +295,8 @@ export class Controller {
 ${jobs.join(",\r\n")}
         ],
 }`;
+        // console.log(yaml);
 
-        console.log(tmpl);
+        fs.writeFileSync(path, yaml);
     }
 }
