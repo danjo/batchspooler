@@ -6,7 +6,7 @@ function createWindow() {
     let width = 100;
 
     console.log(process.argv);
-    if (process.argv[0].indexOf("electron.exe") !== -1 ) {
+    if (process.argv[0].indexOf("electron.exe") !== -1) {
         devtool = true;
         width = 1240;
     } else {
@@ -24,11 +24,6 @@ function createWindow() {
 
     console.log(elec.app.getAppPath());
 
-    elec.ipcMain.on('mainArgv', (event) => {
-        // console.log("mainArgv");
-        event.returnValue = process.argv;
-    });
-
     win.setTitle("batchspooler");
     win.setMenu(null);
     win.loadURL("file://" + __dirname + "/index.html");
@@ -41,29 +36,38 @@ function createWindow() {
         // win = null
         elec.app.quit();
     });
-
-    elec.ipcMain.on("bimport", (event, arg) => {
-        let filenames = elec.dialog.showOpenDialogSync({
-            defaultPath: arg[0],
-            properties: ['openFile']
-        });
-
-        let filename = filenames[0];
-        event.returnValue = filename;
-    });
-
-    elec.ipcMain.on("bexport", (event, arg) => {
-        let filename = elec.dialog.showSaveDialogSync({
-            defaultPath: arg[0],
-            properties: ['showOverwriteConfirmation']
-        });
-
-        event.returnValue = filename;
-    });
-    elec.ipcMain.on("bexport_save", (event, path, yaml) => {
-        console.log(path);
-        fs.writeFileSync(path, yaml);
-    });
 }
+
+
+elec.ipcMain.on('mainArgv', (event) => {
+    // console.log("mainArgv");
+    event.returnValue = process.argv;
+});
+
+elec.ipcMain.on("bimport", (event, arg) => {
+    let filenames = elec.dialog.showOpenDialogSync({
+        defaultPath: arg[0],
+        properties: ['openFile']
+    });
+
+    let filename = filenames[0];
+    event.returnValue = filename;
+});
+
+elec.ipcMain.on("bexport", (event, arg) => {
+    let filename = elec.dialog.showSaveDialogSync({
+        defaultPath: arg[0],
+        properties: ['showOverwriteConfirmation']
+    });
+
+    event.returnValue = filename;
+});
+
+elec.ipcMain.on("bexport_save", (event, path, yaml) => {
+    console.log(path);
+    fs.writeFileSync(path, yaml);
+});
+
+
 
 elec.app.on("ready", createWindow);
