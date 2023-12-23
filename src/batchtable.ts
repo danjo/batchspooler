@@ -21,6 +21,12 @@ export class BatchTable {
         }
     }
 
+    setEntries(entries: BatchEntry[]){
+        for (let entry of entries) {
+            this.entries.push(entry);
+        }
+    }
+
     getEntries(): readonly BatchEntry[] {
         let array: readonly BatchEntry[] = this.entries;
         return array;
@@ -28,8 +34,8 @@ export class BatchTable {
 
     newEntry(): BatchEntry {
         let id = BatchEntry.createId(0);
-        let job = new EmptyJob("");
-        let entry = new BatchEntry(id, "", job);
+        let job = new EmptyJob(this, "");
+        let entry = new BatchEntry(this, id, "", job);
         this.entries.push(entry);
         return entry;
     }

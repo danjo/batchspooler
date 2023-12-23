@@ -2,8 +2,20 @@ import * as elec from 'electron';
 import * as fs from 'fs';
 
 function createWindow() {
+    let devtool = false;
+    let width = 100;
+
+    console.log(process.argv);
+    if (process.argv[0].indexOf("electron.exe") !== -1 ) {
+        devtool = true;
+        width = 1240;
+    } else {
+        devtool = false;
+        width = 640;
+    }
+
     let win = new elec.BrowserWindow({
-        width: 1240, height: 500,
+        width: width, height: 500,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false
@@ -21,8 +33,7 @@ function createWindow() {
     win.setMenu(null);
     win.loadURL("file://" + __dirname + "/index.html");
 
-    let devtool = true;
-    if (devtool) {
+    if (devtool == true) {
         win.webContents.openDevTools();
     }
 

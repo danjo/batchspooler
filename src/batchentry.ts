@@ -1,4 +1,5 @@
 import { BatchJob, BatchJobClasses } from "./batchjob"
+import { BatchTable } from "./batchtable";
 
 export enum EStat {
     entry = "",
@@ -44,13 +45,15 @@ export class BatchEntry {
         return ids;
     }
 
+    btable: BatchTable;
     id: number;
     status: EStat;
     group: string;
     job: BatchJob;
     exitCode: number;
 
-    constructor(id: number, group: string, job: BatchJob) {
+    constructor(btable: BatchTable, id: number, group: string, job: BatchJob) {
+        this.btable = btable;
         this.id = id;
         this.status = EStat.entry;
         this.group = group;
@@ -89,7 +92,7 @@ export class BatchEntry {
         if (jobClass == null) {
             throw new Error("updateJob(): name=" + presentName);
         }
-        let job = new jobClass(param);
+        let job = new jobClass(this.btable, param);
         this.job = job;
     }
 

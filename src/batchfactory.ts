@@ -50,10 +50,11 @@ export class BatchFactory {
         }
 
         let conf = this.buildConf(yconf);
-        let entries = this.buildEntries(yji);
-        let bt = new BatchTable(conf, entries);
+        let btable = new BatchTable(conf, []);
+        let entries = this.buildEntries(btable, yji);
+        btable.setEntries(entries);
 
-        return bt;
+        return btable;
     }
 
     static buildConf(conf: YConf): TableConf {
@@ -64,7 +65,7 @@ export class BatchFactory {
         return tc;
     }
 
-    static buildEntries(infos: YJobInfo[]): BatchEntry[] {
+    static buildEntries(btable: BatchTable, infos: YJobInfo[]): BatchEntry[] {
         let entries: BatchEntry[] = [];
 
         let ids = BatchEntry.createIdMany(infos.length);
@@ -77,8 +78,8 @@ export class BatchFactory {
                 throw new Error("buildJobs(): jobinfo[1]=" + info[1]);
             }
             let param = info[2];
-            let job = new jobClass(param);
-            let entry = new BatchEntry(id, grp, job);
+            let job = new jobClass(btable, param);
+            let entry = new BatchEntry(btable, id, grp, job);
             entries.push(entry);
         }
 

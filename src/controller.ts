@@ -19,9 +19,6 @@ interface RowInfo {
 }
 
 export class Controller {
-    // static vLen = 1;
-    static lastObj: Controller;
-
     static init(): Controller {
         // console.log(process.argv);
         let margv = electron.ipcRenderer.sendSync('mainArgv', null) as string[];
@@ -35,21 +32,25 @@ export class Controller {
         }
 
         if (margv.length === hlen) {
-            return this.load(null);
+            return new Controller(null);
 
         } else if (margv.length === hlen + 1) {
             let p = margv[hlen];
-            return this.load(p);
+            return new Controller(p);
 
         } else {
             throw new Error("init(): margv=" + margv);
         }
     }
 
-    static load(path: string): Controller {
-        let c = new Controller(path);
-        Controller.lastObj = c;
-        return c;
+    static appLog(message: string) {
+        console.log(message);
+
+        let now = new Date(Date.now()).toLocaleString();
+        let line = now + " " + message;
+        let log = document.getElementById("log");
+        log.innerHTML += line + "\r\n";
+        log.scrollTop = log.scrollHeight;
     }
 
     batchtable: BatchTable;
@@ -93,8 +94,8 @@ export class Controller {
 
         // logging
         console.log("process.cwd(): " + process.cwd());
-        this.appLog("dulationMilSec: " + this.batchtable.dulationMilSec);
-        this.appLog("workingDir: " + this.batchtable.workingDir);
+        Controller.appLog("dulationMilSec: " + this.batchtable.dulationMilSec);
+        Controller.appLog("workingDir: " + this.batchtable.workingDir);
     }
 
     async doAsyncProcs() {
@@ -105,16 +106,6 @@ export class Controller {
             let newRow = await this.tabulator.addRow(data, false);
             this.idBag[id] = newRow;
         }
-    }
-
-    appLog(message: string) {
-        console.log(message);
-
-        let now = new Date(Date.now()).toLocaleString();
-        let line = now + " " + message;
-        let log = document.getElementById("log");
-        log.innerHTML += line + "\r\n";
-        log.scrollTop = log.scrollHeight;
     }
 
     async spool(): Promise<void> {
@@ -151,10 +142,6 @@ export class Controller {
         (document.getElementById("step") as HTMLInputElement).value = String(this.count);
     }
 
-    openGroup(group: string) {
-        this.batchtable.addOpenedGroup(group);
-    }
-
     private getRowInfo(cell: Tabulator.CellComponent): RowInfo {
         let row = cell.getRow();
         let pos = row.getPosition();
@@ -169,7 +156,7 @@ export class Controller {
     // trriger from tabulator
     async addEntry(e: UIEvent, cell: Tabulator.CellComponent) {
         let ri = this.getRowInfo(cell);
-        this.appLog("addEntry:" + ri.pos);
+        Controller.appLog("addEntry:" + ri.pos);
 
         let newId = BatchEntry.createId(0);
         let entry = this.batchtable.newEntry();
@@ -181,7 +168,7 @@ export class Controller {
 
     deleteEntry(e: UIEvent, cell: Tabulator.CellComponent) {
         let ri = this.getRowInfo(cell);
-        this.appLog("deleteEntry:" + ri.pos);
+        Controller.appLog("deleteEntry:" + ri.pos);
 
         this.batchtable.deleteEntry(ri.id);
         this.tabulator.deleteRow(ri.row);
@@ -191,7 +178,7 @@ export class Controller {
     updateStat(cell: Tabulator.CellComponent) {
         let ri = this.getRowInfo(cell);
         let entry = this.batchtable.getEntry(ri.id);
-        this.appLog("updateStat:" + ri.pos);
+        Controller.appLog("updateStat:" + ri.pos);
 
         let stat = cell.getValue();
         entry.status = stat;
@@ -199,7 +186,7 @@ export class Controller {
     updateGroup(cell: Tabulator.CellComponent) {
         let ri = this.getRowInfo(cell);
         let entry = this.batchtable.getEntry(ri.id);
-        this.appLog("updateGroup:" + ri.pos);
+        Controller.appLog("updateGroup:" + ri.pos);
 
         let grp = cell.getValue();
         entry.group = grp;
@@ -207,7 +194,7 @@ export class Controller {
     updateJob(cell: Tabulator.CellComponent) {
         let ri = this.getRowInfo(cell);
         let entry = this.batchtable.getEntry(ri.id);
-        this.appLog("updateJob: pos=" + ri.pos);
+        Controller.appLog("updateJob: pos=" + ri.pos);
 
         let job = cell.getValue();
         entry.updateJob(job);
@@ -215,7 +202,7 @@ export class Controller {
     updateParam(cell: Tabulator.CellComponent) {
         let ri = this.getRowInfo(cell);
         let entry = this.batchtable.getEntry(ri.id);
-        this.appLog("updateParam: pos=" + ri.pos);
+        Controller.appLog("updateParam: pos=" + ri.pos);
 
         let param = cell.getValue();
         entry.job.parameter = param;
@@ -227,21 +214,21 @@ export class Controller {
     }
 
     buttonStart() {
-        this.appLog("start");
+        Controller.appLog("start");
         this.stat = CStat.Start;
     }
 
     buttonStop() {
-        this.appLog("stop");
+        Controller.appLog("stop");
         this.stat = CStat.Stop;
     }
 
     buttonImport() {
-        this.appLog("import");
-        // this.appLog("not implemented yet.");
+        Controller.appLog("import");
+        // Controller.appLog("not implemented yet.");
 
         let path = electron.ipcRenderer.sendSync('bimport', this.batchtable.workingDir) as string;
-        this.appLog(path);
+        Controller.appLog(path);
 
         // before buildYaml()
         this.doDeleteExists();
@@ -267,11 +254,11 @@ export class Controller {
 
 
     buttonExport() {
-        this.appLog("export");
-        // this.appLog("not implemented yet.");
+        Controller.appLog("export");
+        // Controller.appLog("not implemented yet.");
 
         let path = electron.ipcRenderer.sendSync('bexport', this.batchtable.workingDir) as string;
-        this.appLog(path);
+        Controller.appLog(path);
 
         let jobs: string[] = [];
         // batchtable

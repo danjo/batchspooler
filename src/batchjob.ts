@@ -1,5 +1,6 @@
 import { exec } from "child_process";
 import { Controller } from "./controller";
+import { BatchTable } from "./batchtable";
 
 export interface JobStat {
     exitCode?: number
@@ -7,9 +8,11 @@ export interface JobStat {
 
 export class BatchJob {
     readonly presentName: string;
+    btable: BatchTable;
     parameter: string;
 
-    constructor(param: string) {
+    constructor(btable: BatchTable, param: string) {
+        this.btable = btable;
         this.parameter = param;
     }
 
@@ -24,7 +27,7 @@ export class BatchJob {
 
 // empty for new row
 export class EmptyJob extends BatchJob {
-    presentName = "empty";
+    override readonly presentName = "empty";
 
     validate(): boolean {
         return true;
@@ -37,11 +40,11 @@ export class EmptyJob extends BatchJob {
 
 // exec
 export class ExecJob extends BatchJob {
-    presentName = "exec";
+    override readonly presentName = "exec";
 
     async run(prevEc: number): Promise<JobStat> {
         let options = {
-            cwd: Controller.lastObj.batchtable.workingDir
+            cwd: this.btable.workingDir
         };
         let stat: JobStat = {};
 
@@ -57,19 +60,19 @@ export class ExecJob extends BatchJob {
 
 // notification
 export class EchoJob extends BatchJob {
-    presentName = "echo";
+    override readonly presentName = "echo";
 
     async run(prevEc: number): Promise<JobStat> {
-        Controller.lastObj.appLog(this.parameter);
+        Controller.appLog(this.parameter);
         return null;
     }
 }
 
 export class SoundJob extends BatchJob {
-    presentName = "sound";
+    override readonly presentName = "sound";
 
     async run(prevEc: number): Promise<JobStat> {
-        Controller.lastObj.appLog(this.parameter);
+        Controller.appLog(this.parameter);
 
         let au = new Audio();
         au.src = process.cwd() + "/" + this.parameter;
@@ -80,7 +83,7 @@ export class SoundJob extends BatchJob {
 
 // sleep
 export class SleepJob extends BatchJob {
-    presentName = "sleep";
+    override readonly presentName = "sleep";
 
     async run(prevEc: number): Promise<JobStat> {
         let m1 = this.parameter.match("until.(\\d\\d)(\\d\\d)");
@@ -116,12 +119,12 @@ export class SleepJob extends BatchJob {
 
 // parallel
 export class OpenGroup extends BatchJob {
-    presentName = "open";
+    override readonly presentName = "open";
 
     async run(prevEc: number): Promise<JobStat> {
         let groups = this.parameter.split(" ");
         for (let group of groups) {
-            Controller.lastObj.openGroup(group);
+            this.btable.addOpenedGroup(group);
         }
         return null;
     }
@@ -141,7 +144,7 @@ let classes: { [key: string]: typeof BatchJob } = {
 
 let keys = Object.keys(classes)
 for (let key of keys) {
-    let pname = (new classes[key](null)).presentName
+    let pname = (new classes[key](null, null)).presentName
     BatchJobClasses[pname] = classes[key]
     // console.log("pname:" + pname)
 }
