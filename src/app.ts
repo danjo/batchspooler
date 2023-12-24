@@ -2,16 +2,16 @@ import * as elec from 'electron';
 import * as fs from 'fs';
 
 function createWindow() {
-    let devtool = false;
+    let devtool = true;
     let width = 100;
 
     console.log(process.argv);
     if (process.argv[0].indexOf("electron.exe") !== -1) {
         devtool = true;
-        width = 1240;
+        width = 1280;
     } else {
         devtool = false;
-        width = 640;
+        width = 680;
     }
 
     let win = new elec.BrowserWindow({
@@ -32,10 +32,23 @@ function createWindow() {
         win.webContents.openDevTools();
     }
 
+
     win.on("closed", () => {
         // win = null
         elec.app.quit();
     });
+
+    let imgFilePath = __dirname + '/assets/tray.ico';
+    console.log(imgFilePath);
+
+    tray = new elec.Tray(imgFilePath);
+    const contextMenu = elec.Menu.buildFromTemplate([
+        { label: 'show', click: async() => { win.show(); } },
+        { label: 'hide', click: async() => { win.hide(); } },
+        { label: 'quit', role: 'quit' }
+      ]);
+    tray.setToolTip("batchspooler");
+    tray.setContextMenu(contextMenu);
 }
 
 
@@ -69,5 +82,9 @@ elec.ipcMain.on("bexport_save", (event, path, yaml) => {
 });
 
 
+let tray : elec.Tray;
 
 elec.app.on("ready", createWindow);
+// elec.app.whenReady().then(() => {
+//     createWindow();
+// });
