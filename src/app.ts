@@ -43,10 +43,10 @@ function createWindow() {
 
     tray = new elec.Tray(imgFilePath);
     const contextMenu = elec.Menu.buildFromTemplate([
-        { label: 'show', click: async() => { win.show(); } },
-        { label: 'hide', click: async() => { win.hide(); } },
+        { label: 'show', click: async () => { win.show(); } },
+        { label: 'hide', click: async () => { win.hide(); } },
         { label: 'quit', role: 'quit' }
-      ]);
+    ]);
     tray.setToolTip("batchspooler");
     tray.setContextMenu(contextMenu);
 }
@@ -63,8 +63,12 @@ elec.ipcMain.on("bimport", (event, arg) => {
         properties: ['openFile']
     });
 
-    let filename = filenames[0];
-    event.returnValue = filename;
+    if (filenames != null) {
+        let filename = filenames[0];
+        event.returnValue = filename;
+    } else {
+        event.returnValue = null;
+    }
 });
 
 elec.ipcMain.on("bexport", (event, arg) => {
@@ -82,7 +86,7 @@ elec.ipcMain.on("bexport_save", (event, path, yaml) => {
 });
 
 
-let tray : elec.Tray;
+let tray: elec.Tray;
 
 elec.app.on("ready", createWindow);
 // elec.app.whenReady().then(() => {

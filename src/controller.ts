@@ -228,6 +228,9 @@ export class Controller {
         // Controller.appLog("not implemented yet.");
 
         let path = electron.ipcRenderer.sendSync('bimport', this.batchtable.workingDir) as string;
+        if(path == null){
+            return;
+        }
         Controller.appLog(path);
 
         // before buildYaml()
@@ -258,6 +261,9 @@ export class Controller {
         // Controller.appLog("not implemented yet.");
 
         let path = electron.ipcRenderer.sendSync('bexport', this.batchtable.workingDir) as string;
+        if(path == null){
+            return;
+        }
         Controller.appLog(path);
 
         let jobs: string[] = [];
@@ -284,6 +290,9 @@ ${jobs.join(",\r\n")}
 }`;
 
         electron.ipcRenderer.sendSync('bexport_save', path, yaml);
+        if(path == null){
+            return;
+        }
         console.log(yaml);
     }
 }
