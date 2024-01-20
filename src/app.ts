@@ -37,6 +37,9 @@ function createWindow() {
         // win = null
         elec.app.quit();
     });
+    win.on("minimize", () => {
+        win.hide();
+    });
 
     let imgFilePath = __dirname + '/assets/tray.ico';
     console.log(imgFilePath);
@@ -49,6 +52,9 @@ function createWindow() {
     ]);
     tray.setToolTip("batchspooler");
     tray.setContextMenu(contextMenu);
+    tray.on("click", () => {
+        win.show();
+    });
 }
 
 
